@@ -1,0 +1,104 @@
+﻿<UserControl
+  x:Class="FFXIV.BalloonChat.Pages.SettingsThemePage"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+  xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+  xmlns:vm="clr-namespace:FFXIV.BalloonChat.Pages"
+  xmlns:config="clr-namespace:FFXIV.BalloonChat.Config"
+  xmlns:balloon="clr-namespace:FFXIV.BalloonChat.Balloon"
+  mc:Ignorable="d" 
+  d:DesignHeight="768" d:DesignWidth="1280">
+
+  <UserControl.Resources>
+  </UserControl.Resources>
+  
+  <UserControl.DataContext>
+    <vm:SettingsThemeViewModel />
+  </UserControl.DataContext>
+  
+  <Grid Style="{StaticResource ContentRoot}">
+    <Grid.Resources>
+      <DataTemplate x:Key="ThemeTemplate" DataType="{x:Type config:BalloonChatTheme}">
+        <Label
+          Content="{Binding Name}" />
+      </DataTemplate>
+    </Grid.Resources>
+
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="25*" />
+      <ColumnDefinition Width="80*"/>
+    </Grid.ColumnDefinitions>
+
+    <ListBox
+      x:Name="ThemesListBox"
+      Grid.Column="0" 
+      ItemsSource="{Binding Path=Items}" 
+      ItemTemplate="{StaticResource ThemeTemplate}">
+    </ListBox>
+    
+    <StackPanel
+      Grid.Column="1" 
+      Orientation="Vertical" 
+      Margin="10, 0, 10, 0">
+      
+      <balloon:BalloonControl
+        x:Name="Balloon"
+        HorizontalAlignment="Left"
+        Width="400" />
+
+      <Grid 
+        Margin="0, 20, 0, 0">
+        
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="200" />
+          <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        
+        <Grid.RowDefinitions>
+          <RowDefinition Height="30" />
+          <RowDefinition Height="40" />
+          <RowDefinition Height="30" />
+          <RowDefinition Height="30" />
+          <RowDefinition Height="30" />
+          <RowDefinition Height="30" />
+          <RowDefinition Height="30" />
+          <RowDefinition Height="30" />
+        </Grid.RowDefinitions>
+
+        <Label Grid.Row="0" Grid.Column="0" Content="Theme name" HorizontalAlignment="Left" VerticalAlignment="Center" />
+        <TextBox Grid.Row="0" Grid.Column="1" x:Name="ThemeNameTextBox" Width="300" HorizontalAlignment="Left" VerticalAlignment="Center" />
+        
+        <Label Grid.Row="1" Grid.Column="0" Content="Font" HorizontalAlignment="Left" VerticalAlignment="Center" />
+        <Button Grid.Row="1" Grid.Column="1" x:Name="FontButton" Content="メイリオ" Padding="3" Width="600" HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="Left" />
+
+        <Label Grid.Row="2" Grid.Column="0" Content="Font color" HorizontalAlignment="Left" VerticalAlignment="Center" />
+        <TextBox Grid.Row="2" Grid.Column="1" x:Name="FontColorTextBox" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center" MaxLength="9" />
+
+        <Label Grid.Row="3" Grid.Column="0" Content="Font outline color" HorizontalAlignment="Left" VerticalAlignment="Center" />
+        <TextBox Grid.Row="3" Grid.Column="1" x:Name="FontOutlineColorTextBox" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center" MaxLength="9" />
+
+        <Label Grid.Row="4" Grid.Column="0" Content="Font shadow color" HorizontalAlignment="Left" VerticalAlignment="Center" />
+        <TextBox Grid.Row="4" Grid.Column="1" x:Name="FontShadowColorTextBox" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center" MaxLength="9" />
+
+        <Label Grid.Row="5" Grid.Column="0" Content="Border color" HorizontalAlignment="Left" VerticalAlignment="Center" />
+        <TextBox Grid.Row="5" Grid.Column="1" x:Name="BorderColorTextBox" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center" MaxLength="9" />
+
+        <Label Grid.Row="6" Grid.Column="0" Content="Border thickness" HorizontalAlignment="Left" VerticalAlignment="Center" />
+        <TextBox Grid.Row="6" Grid.Column="1" x:Name="BorderThicknessTextBox" Width="50" HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="Right" MaxLength="4" />
+
+        <Label Grid.Row="7" Grid.Column="0" Content="Backgound color" HorizontalAlignment="Left" VerticalAlignment="Center" />
+        <TextBox Grid.Row="7" Grid.Column="1" x:Name="BackgoundColorTextBox" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center" MaxLength="9" />
+
+      </Grid>
+    </StackPanel>
+    
+    <Button
+      Grid.Column="1"
+      x:Name="ApplyButton"
+      Content="Apply"
+      HorizontalAlignment="Right"
+      VerticalAlignment="Bottom" />
+  </Grid>
+</UserControl>
