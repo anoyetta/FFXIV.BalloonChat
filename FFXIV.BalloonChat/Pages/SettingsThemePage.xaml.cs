@@ -47,8 +47,11 @@ namespace FFXIV.BalloonChat.Pages
             var theme = this.ThemesListBox.SelectedItem as BalloonChatTheme;
             if (theme == null)
             {
+                this.DetailsPanel.Visibility = Visibility.Hidden;
                 return;
             }
+
+            this.DetailsPanel.Visibility = Visibility.Visible;
 
             try
             {
@@ -75,6 +78,60 @@ namespace FFXIV.BalloonChat.Pages
             {
                 this.enabledPreview = true;
             }
+        }
+
+        private void AddThemeMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var theme = this.ThemesListBox.SelectedItem as BalloonChatTheme;
+
+            var newTheme = new BalloonChatTheme()
+            {
+                ID = Guid.NewGuid(),
+                Name = "New Theme",
+            };
+
+            if (theme != null)
+            {
+                newTheme.FontColor = theme.FontColor;
+                newTheme.FontOutlineColor = theme.FontOutlineColor;
+                newTheme.FontShadowColor = theme.FontShadowColor;
+                newTheme.BorderColor = theme.BorderColor;
+                newTheme.BorderThickness = theme.BorderThickness;
+                newTheme.BackgroundColor = theme.BackgroundColor;
+                newTheme.Font = theme.Font;
+            }
+
+            BalloonChatConfig.Default.Themes.Add(newTheme);
+            BalloonChatConfig.Default.Save();
+
+            this.ThemesListBox.Items.Refresh();
+            this.ThemesListBox.SelectedItem = newTheme;
+
+            TraceUtility.WriteLog("Added new theme.");
+        }
+
+        private void DeleteThemeMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedIndex = this.ThemesListBox.SelectedIndex;
+
+            var theme = this.ThemesListBox.SelectedItem as BalloonChatTheme;
+            if (theme == null)
+            {
+                return;
+            }
+
+            BalloonChatConfig.Default.Themes.Remove(theme);
+            BalloonChatConfig.Default.Save();
+
+            this.ThemesListBox.Items.Refresh();
+
+            if (this.ThemesListBox.Items.Count > 0)
+            {
+                this.ThemesListBox.SelectedIndex =
+                    selectedIndex != 0 ? selectedIndex - 1 : 0;
+            }
+
+            TraceUtility.WriteLog("Deleted theme. [" + theme.Name + "]");
         }
 
         private void FontButton_Click(object sender, RoutedEventArgs e)
@@ -137,6 +194,8 @@ namespace FFXIV.BalloonChat.Pages
             theme.BackgroundColor = colorValidator(this.BackgoundColorTextBox);
 
             BalloonChatConfig.Default.Save();
+
+            TraceUtility.WriteLog("Updated theme. [" + theme.Name + "]");
         }
 
         private void PreviewBalloon()

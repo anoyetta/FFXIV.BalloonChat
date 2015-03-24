@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Windows.Data;
-using System.Windows.Markup;
 using System.Windows.Media;
 
 namespace FFXIV.PluginCore.Controls
@@ -12,8 +12,9 @@ namespace FFXIV.PluginCore.Controls
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var v = value as FontFamily;
-            var currentLang = XmlLanguage.GetLanguage(culture.IetfLanguageTag);
-            return v.FamilyNames.FirstOrDefault(o => o.Key == currentLang).Value ?? v.Source;
+            var cul = Thread.CurrentThread.CurrentCulture;
+            return v.FamilyNames.FirstOrDefault(o => 
+                o.Key.IetfLanguageTag.ToLower() == cul.IetfLanguageTag.ToLower()).Value ?? v.Source;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

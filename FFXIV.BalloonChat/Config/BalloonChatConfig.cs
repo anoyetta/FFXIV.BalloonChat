@@ -53,7 +53,7 @@ namespace FFXIV.BalloonChat.Config
 
         public void Reset()
         {
-            this.Opacity = 8;
+            this.Opacity = 5;
 
             this.ChatModeSettings = new List<BalloonChatMode>(new BalloonChatMode[]
             {

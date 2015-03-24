@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ColorExtension.cs" />
+    <Compile Include="Controls\InverseBooleanConverter.cs" />
     <Compile Include="Controls\FontDialog.cs" />
     <Compile Include="Controls\FontFamilyToNameConverter.cs" />
     <Compile Include="Controls\FontDialogContent.xaml.cs" />
@@ -71,6 +72,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="StringExtension.cs" />
     <Compile Include="TraceUtility.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

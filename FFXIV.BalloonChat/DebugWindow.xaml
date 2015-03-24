@@ -4,6 +4,7 @@
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:local="clr-namespace:FFXIV.BalloonChat.Pages"
   xmlns:config="clr-namespace:FFXIV.BalloonChat.Config"
+  xmlns:mui="http://firstfloorsoftware.com/ModernUI"
   Title="DEBUG"
   WindowStartupLocation="CenterScreen"
   WindowStyle="SingleBorderWindow"
@@ -11,28 +12,41 @@
   Width="800" Height="600">
 
   <Window.Resources>
+    <SolidColorBrush x:Key="BackgroundBrush" Color="#252526" />
     <local:SettingsGeneralViewModel x:Key="MainViewModel" />
     <local:SettingsThemeViewModel x:Key="ThemesViewModel" />
   </Window.Resources>
-
+  
   <Grid>
-    <StackPanel Orientation="Vertical" Margin="10">
-      <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-        <Label Content="Speaker" VerticalAlignment="Center" HorizontalAlignment="Left" Width="120" />
-        <TextBox x:Name="SpeakerTextBox" Width="200" HorizontalAlignment="Center" VerticalContentAlignment="Center" Text="Naoki Yoshida" />
-      </StackPanel>
-      
-      <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-        <Label Content="ChatMode" VerticalAlignment="Center" HorizontalAlignment="Left" Width="120" />
-        <ComboBox x:Name="ChatModeComboBox" ItemsSource="{Binding Source={StaticResource MainViewModel}, Path=Items}" DisplayMemberPath="Mode" SelectedIndex="0" />
-      </StackPanel>
-      
-      <StackPanel Orientation="Vertical" Margin="0,0,0,8">
-        <Label Content="Message" VerticalAlignment="Center" HorizontalAlignment="Left" Width="120" Margin="0,0,0,8" />
-        <TextBox x:Name="MessageTextBox" Height="300" TextWrapping="NoWrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" />
-      </StackPanel>
-    </StackPanel>
+    <TabControl Margin="10" Background="{StaticResource BackgroundBrush}">
+      <TabItem Header="Speak">
+        <Grid>
+          <StackPanel Orientation="Vertical" Margin="10">
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+              <Label Content="Speaker" VerticalAlignment="Center" HorizontalAlignment="Left" Width="120" />
+              <TextBox x:Name="SpeakerTextBox" Width="200" HorizontalAlignment="Center" VerticalContentAlignment="Center" Text="Naoki Yoshida" />
+            </StackPanel>
 
-    <Button x:Name="SpeakButton" Content="Speak" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" />
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+              <Label Content="ChatMode" VerticalAlignment="Center" HorizontalAlignment="Left" Width="120" />
+              <ComboBox x:Name="ChatModeComboBox" ItemsSource="{Binding Source={StaticResource MainViewModel}, Path=Items}" DisplayMemberPath="Mode" SelectedIndex="0" />
+            </StackPanel>
+
+            <StackPanel Orientation="Vertical" Margin="0,0,0,8">
+              <Label Content="Message" VerticalAlignment="Center" HorizontalAlignment="Left" Width="120" Margin="0,0,0,8" />
+              <TextBox x:Name="MessageTextBox" Height="300" TextWrapping="NoWrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" />
+            </StackPanel>
+          </StackPanel>
+
+          <Button x:Name="SpeakButton" Content="Speak" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" />
+        </Grid>
+      </TabItem>
+      
+      <TabItem Header="Log">
+        <Grid>
+          <TextBox x:Name="LogTextBox" AcceptsReturn="True" TextWrapping="NoWrap" VerticalScrollBarVisibility="Auto" IsReadOnly="True" IsTabStop="False" />
+        </Grid>
+      </TabItem>
+    </TabControl>
   </Grid>
 </Window>

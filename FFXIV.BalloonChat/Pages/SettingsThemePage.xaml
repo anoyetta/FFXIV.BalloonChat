@@ -9,20 +9,24 @@
   xmlns:config="clr-namespace:FFXIV.BalloonChat.Config"
   xmlns:balloon="clr-namespace:FFXIV.BalloonChat.Balloon"
   mc:Ignorable="d" 
-  d:DesignHeight="768" d:DesignWidth="1280">
+  d:DesignHeight="768" d:DesignWidth="1280"
+  TextOptions.TextFormattingMode="Ideal"
+  TextOptions.TextHintingMode="Auto"
+  TextOptions.TextRenderingMode="ClearType">
 
   <UserControl.Resources>
+    <vm:SettingsThemeViewModel x:Key="SettingsThemeViewModel" />
+
+    <ContextMenu x:Key="ThemeListBoxContextMenu">
+      <MenuItem x:Name="AddThemeMenuItem" Header="Add Theme" Click="AddThemeMenuItem_Click" />
+      <MenuItem x:Name="DeleteThemeMenuItem"  Header="Delete Theme" Click="DeleteThemeMenuItem_Click" />
+    </ContextMenu>
   </UserControl.Resources>
-  
-  <UserControl.DataContext>
-    <vm:SettingsThemeViewModel />
-  </UserControl.DataContext>
-  
+
   <Grid Style="{StaticResource ContentRoot}">
     <Grid.Resources>
       <DataTemplate x:Key="ThemeTemplate" DataType="{x:Type config:BalloonChatTheme}">
-        <Label
-          Content="{Binding Name}" />
+        <TextBlock Text="{Binding Name}" Style="{StaticResource Heading2}" />
       </DataTemplate>
     </Grid.Resources>
 
@@ -34,15 +38,18 @@
     <ListBox
       x:Name="ThemesListBox"
       Grid.Column="0" 
-      ItemsSource="{Binding Path=Items}" 
-      ItemTemplate="{StaticResource ThemeTemplate}">
+      ItemsSource="{Binding Source={StaticResource SettingsThemeViewModel}, Path=Items}" 
+      ItemTemplate="{StaticResource ThemeTemplate}" 
+      ContextMenu="{StaticResource ThemeListBoxContextMenu}">
     </ListBox>
-    
+
     <StackPanel
+      x:Name="DetailsPanel"
       Grid.Column="1" 
       Orientation="Vertical" 
-      Margin="10, 0, 10, 0">
-      
+      Margin="10, 0, 10, 0" 
+      Visibility="Hidden">
+
       <balloon:BalloonControl
         x:Name="Balloon"
         HorizontalAlignment="Left"
@@ -50,12 +57,12 @@
 
       <Grid 
         Margin="0, 20, 0, 0">
-        
+
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="200" />
           <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        
+
         <Grid.RowDefinitions>
           <RowDefinition Height="30" />
           <RowDefinition Height="40" />
@@ -68,37 +75,38 @@
         </Grid.RowDefinitions>
 
         <Label Grid.Row="0" Grid.Column="0" Content="Theme name" HorizontalAlignment="Left" VerticalAlignment="Center" />
-        <TextBox Grid.Row="0" Grid.Column="1" x:Name="ThemeNameTextBox" Width="300" HorizontalAlignment="Left" VerticalAlignment="Center" />
-        
+        <TextBox Grid.Row="0" Grid.Column="1" x:Name="ThemeNameTextBox" MinWidth="300" HorizontalAlignment="Left" VerticalAlignment="Center" />
+
         <Label Grid.Row="1" Grid.Column="0" Content="Font" HorizontalAlignment="Left" VerticalAlignment="Center" />
-        <Button Grid.Row="1" Grid.Column="1" x:Name="FontButton" Content="メイリオ" Padding="3" Width="600" HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="Left" />
+        <Button Grid.Row="1" Grid.Column="1" x:Name="FontButton" Content="メイリオ" Padding="3, 3, 12, 3" HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="Left" />
 
         <Label Grid.Row="2" Grid.Column="0" Content="Font color" HorizontalAlignment="Left" VerticalAlignment="Center" />
-        <TextBox Grid.Row="2" Grid.Column="1" x:Name="FontColorTextBox" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center" MaxLength="9" />
+        <TextBox Grid.Row="2" Grid.Column="1" x:Name="FontColorTextBox" MinWidth="100" HorizontalAlignment="Left" VerticalAlignment="Center" MaxLength="9" />
 
         <Label Grid.Row="3" Grid.Column="0" Content="Font outline color" HorizontalAlignment="Left" VerticalAlignment="Center" />
-        <TextBox Grid.Row="3" Grid.Column="1" x:Name="FontOutlineColorTextBox" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center" MaxLength="9" />
+        <TextBox Grid.Row="3" Grid.Column="1" x:Name="FontOutlineColorTextBox" MinWidth="100" HorizontalAlignment="Left" VerticalAlignment="Center" MaxLength="9" />
 
         <Label Grid.Row="4" Grid.Column="0" Content="Font shadow color" HorizontalAlignment="Left" VerticalAlignment="Center" />
-        <TextBox Grid.Row="4" Grid.Column="1" x:Name="FontShadowColorTextBox" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center" MaxLength="9" />
+        <TextBox Grid.Row="4" Grid.Column="1" x:Name="FontShadowColorTextBox" MinWidth="100" HorizontalAlignment="Left" VerticalAlignment="Center" MaxLength="9" />
 
         <Label Grid.Row="5" Grid.Column="0" Content="Border color" HorizontalAlignment="Left" VerticalAlignment="Center" />
-        <TextBox Grid.Row="5" Grid.Column="1" x:Name="BorderColorTextBox" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center" MaxLength="9" />
+        <TextBox Grid.Row="5" Grid.Column="1" x:Name="BorderColorTextBox" MinWidth="100" HorizontalAlignment="Left" VerticalAlignment="Center" MaxLength="9" />
 
         <Label Grid.Row="6" Grid.Column="0" Content="Border thickness" HorizontalAlignment="Left" VerticalAlignment="Center" />
-        <TextBox Grid.Row="6" Grid.Column="1" x:Name="BorderThicknessTextBox" Width="50" HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="Right" MaxLength="4" />
+        <TextBox Grid.Row="6" Grid.Column="1" x:Name="BorderThicknessTextBox" MinWidth="50" HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="Right" MaxLength="4" />
 
         <Label Grid.Row="7" Grid.Column="0" Content="Backgound color" HorizontalAlignment="Left" VerticalAlignment="Center" />
-        <TextBox Grid.Row="7" Grid.Column="1" x:Name="BackgoundColorTextBox" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center" MaxLength="9" />
+        <TextBox Grid.Row="7" Grid.Column="1" x:Name="BackgoundColorTextBox" MinWidth="100" HorizontalAlignment="Left" VerticalAlignment="Center" MaxLength="9" />
 
       </Grid>
     </StackPanel>
-    
+
     <Button
       Grid.Column="1"
       x:Name="ApplyButton"
       Content="Apply"
       HorizontalAlignment="Right"
-      VerticalAlignment="Bottom" />
+      VerticalAlignment="Bottom"
+      Visibility="{Binding ElementName=DetailsPanel, Path=Visibility}"/>
   </Grid>
 </UserControl>

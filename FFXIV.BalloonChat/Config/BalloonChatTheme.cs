@@ -18,7 +18,7 @@ namespace FFXIV.BalloonChat.Config
             this.FontShadowColor = Colors.Gainsboro.ToString();
             this.BorderColor = Colors.Gainsboro.ToString();
             this.BorderThickness = 2.4d;
-            this.BackgroundColor = Colors.DimGray.ToString();
+            this.BackgroundColor = "#F0252525";
             this.Font = new FontInfo(
                 new FontFamily("メイリオ"),
                 13.0d,

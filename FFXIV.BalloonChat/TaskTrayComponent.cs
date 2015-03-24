@@ -47,9 +47,11 @@ namespace FFXIV.BalloonChat
 
             MainWindow.Default.ShowInTaskbar = true;
 
-#if DEBUG
-            new DebugWindow().Show();
-#endif
+            // デバッグWindowを表示する？
+            if (AppSettings.DebugMode)
+            {
+                new DebugWindow().Show();
+            }
         }
     }
 }

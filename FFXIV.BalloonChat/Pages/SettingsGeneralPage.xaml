@@ -7,12 +7,17 @@
   xmlns:mui="http://firstfloorsoftware.com/ModernUI"
   xmlns:local="clr-namespace:FFXIV.BalloonChat.Pages"
   xmlns:config="clr-namespace:FFXIV.BalloonChat.Config"
+  xmlns:control="http://FFXIV.PluginCore.Controls"
   mc:Ignorable="d" 
-  d:DesignWidth="1600" d:DesignHeight="900">
+  d:DesignWidth="1600" d:DesignHeight="900"
+  TextOptions.TextFormattingMode="Ideal"
+  TextOptions.TextHintingMode="Auto"
+  TextOptions.TextRenderingMode="ClearType">
 
   <UserControl.Resources>
     <local:SettingsGeneralViewModel x:Key="MainViewModel" />
     <local:SettingsThemeViewModel x:Key="ThemesViewModel" />
+    <control:InverseBooleanConverter x:Key="InverseBooleanConverter" />
 
     <CollectionViewSource
       x:Key="ChatModeSettingsDataView"
@@ -37,7 +42,7 @@
               SelectedValue="{Binding Path=Theme}"/>
           </StackPanel>
 
-          <CheckBox Content="吹出しの表示時間を自動調整する" IsChecked="{Binding Path=AutoDisplayTime}" Margin="0,0,0,12" />
+          <CheckBox x:Name="AutoDisplayTimeCheckBox" Content="吹出しの表示時間を自動調整する" IsChecked="{Binding Path=AutoDisplayTime}" Margin="0,0,0,12" />
 
           <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
             <Label Content="吹出しの表示時間(ms)" VerticalAlignment="Center"/>
@@ -46,9 +51,10 @@
               Margin="12,0,0,0" 
               Width="50"
               HorizontalContentAlignment="Right"
-              Text="{Binding DisplayTime}" />
+              Text="{Binding DisplayTime}"
+              IsEnabled="{Binding ElementName=AutoDisplayTimeCheckBox, Path=IsChecked, Converter={StaticResource InverseBooleanConverter}}"/>
           </StackPanel>
-          
+
         </StackPanel>
       </StackPanel>
     </DataTemplate>

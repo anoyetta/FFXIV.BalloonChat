@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,7 +10,7 @@ namespace FFXIV.BalloonChat.Balloon
 {
     public class BalloonWindowController
     {
-        private const int PollingInterval = 100;
+        private const int DefaultPollingInterval = 100;
 
         #region Singleton
 
@@ -34,16 +35,19 @@ namespace FFXIV.BalloonChat.Balloon
 
         private Task pollingTask;
         private CancellationTokenSource pollingTaskCTS;
+        private int pollingInterval;
 
         public void Start()
         {
             this.pollingTaskCTS = new CancellationTokenSource();
 
+            this.pollingInterval = DefaultPollingInterval;
+
             this.pollingTask = new Task(() =>
             {
                 while (true)
                 {
-                    Thread.Sleep(PollingInterval);
+                    Thread.Sleep(this.pollingInterval);
 
                     if (this.pollingTaskCTS.Token.IsCancellationRequested)
                     {
@@ -95,24 +99,52 @@ namespace FFXIV.BalloonChat.Balloon
 
         #endregion
 
-        private FFXIVLIB ffivlib = new FFXIVLIB();
+        private FFXIVLIB ffivlib;
+        private Chatlog chatLog;
 
         private void PollingTaskCore()
         {
-            var chatLog = this.ffivlib.GetChatlog();
-            if (chatLog == null)
+            if (Process.GetProcessesByName("ffxiv").Length > 0)
+            {
+                if (this.ffivlib == null)
+                {
+                    this.ffivlib = new FFXIVLIB();
+                }
+            }
+            else
+            {
+                this.pollingInterval = 3 * 1000;
+                return;
+            }
+
+            this.pollingInterval = DefaultPollingInterval;
+
+            if (this.chatLog == null)
+            {
+                this.chatLog = this.ffivlib.GetChatlog();
+            }
+
+            if (!this.chatLog.IsNewLine())
             {
                 return;
             }
 
-            if (!chatLog.IsNewLine())
-            {
-                return;
-            }
-
-            foreach (var entry in chatLog.GetChatLogLines())
+            foreach (var entry in this.chatLog.GetChatLogLines())
             {
                 TraceUtility.WriteLog(entry.RawString);
+            }
+
+            var entitys = this.ffivlib.GetEntityByType(TYPE.Player);
+            foreach (var entity in entitys)
+            {
+                var t = string.Empty;
+                t += "{" + Environment.NewLine;
+                t += "    Name = " + entity.Name + "," + Environment.NewLine;
+                t += "    X = " + entity.X.ToString() + "," + Environment.NewLine;
+                t += "    Y = " + entity.Y.ToString() + "," + Environment.NewLine;
+                t += "    Z = " + entity.Z.ToString() + "," + Environment.NewLine;
+                t += "}" + Environment.NewLine;
+                TraceUtility.WriteLog(t);
             }
         }
     }
