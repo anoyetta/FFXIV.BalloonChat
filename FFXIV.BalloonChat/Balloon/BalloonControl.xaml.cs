@@ -1,8 +1,8 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using FFXIV.BalloonChat.Config;
 
+using FFXIV.BalloonChat.Config;
 using FFXIV.PluginCore;
 
 namespace FFXIV.BalloonChat.Balloon
