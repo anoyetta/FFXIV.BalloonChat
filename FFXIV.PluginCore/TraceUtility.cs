@@ -1,65 +1,104 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
+using System.Windows.Controls;
 
 namespace FFXIV.PluginCore
 {
     public static class TraceUtility
     {
-        static TraceUtility()
+        private static CustomTraceListener listener;
+
+        public static CustomTraceListener TraceListner
         {
-            SetupListener();
+            get { return listener; }
         }
 
-        public static void SetupListener()
+        public static void SetupListener(
+            Assembly assembly)
         {
-            if (Trace.Listeners.Count > 0)
-            {
-                var listener = Trace.Listeners[0] as DefaultTraceListener;
-                if (listener != null)
-                {
-                    var file = Path.Combine(
-                        EnvironmentUtility.GetAppDataPath(),
-                        EnvironmentUtility.GetProductName() + ".log");
+            Trace.Listeners.Remove("Default");
 
-                    listener.LogFileName = file;
+            listener = new CustomTraceListener(assembly)
+            {
+                LogFileName = Path.Combine(
+                    EnvironmentUtility.GetAppDataPath(),
+                    EnvironmentUtility.GetProductName() + ".log")
+            };
+
+            Trace.Listeners.Add(listener);
+        }
+    }
+
+    public class CustomTraceListener : TraceListener
+    {
+        private DefaultTraceListener defaultTraceListener = new DefaultTraceListener();
+        private List<TextBox> textBoxes = new List<TextBox>();
+        private string logFile;
+
+        public CustomTraceListener(
+            Assembly assembly)
+        {
+            this.Name = assembly.GetName().Name;
+        }
+
+        private CustomTraceListener()
+        {
+        }
+
+        public List<TextBox> TextBoxes
+        {
+            get { return this.textBoxes; }
+        }
+
+        public string LogFileName
+        {
+            get { return this.logFile; }
+            set { this.logFile = value; }
+        }
+
+        public override void Write(string message)
+        {
+            try
+            {
+                message = DateTime.Now.ToString("[yyyy/MM/dd HH:mm:ss.fff]") + " " + message;
+
+                if (this.defaultTraceListener != null)
+                {
+                    this.defaultTraceListener.Write(message);
+                }
+
+                foreach (var tb in this.textBoxes)
+                {
+                    if (tb != null &&
+                        tb.IsLoaded)
+                    {
+                        tb.AppendText(message);
+                        tb.ScrollToEnd();
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(this.logFile))
+                {
+                    var dir = Path.GetDirectoryName(this.logFile);
+                    if (!Directory.Exists(dir))
+                    {
+                        Directory.CreateDirectory(dir);
+                    }
+
+                    File.AppendAllText(this.logFile, message);
                 }
             }
-        }
-
-        public static void WriteLog(
-            string text,
-            params object[] args)
-        {
-            Trace.WriteLine(
-                DateTime.Now.ToString("[yyyy/MM/dd HH:mm:ss.fff]") + " " +
-                string.Format(text, args));
-        }
-
-        public static void WriteExceptionLog(
-            Exception ex)
-        {
-            WriteExceptionLog(null, ex);
-        }
-
-        public static void WriteExceptionLog(
-            string text,
-            Exception ex)
-        {
-            if (string.IsNullOrWhiteSpace(text))
+            catch
             {
-                Trace.WriteLine(
-                    DateTime.Now.ToString("[yyyy/MM/dd HH:mm:ss.fff]") + " " +
-                    ex.ToString());
             }
-            else
-            {
-                Trace.WriteLine(
-                    DateTime.Now.ToString("[yyyy/MM/dd HH:mm:ss.fff]") + " " +
-                    text);
-                Trace.WriteLine(
-                    ex.ToString());
-            }
+        }
+
+        public override void WriteLine(string message)
+        {
+            this.Write(message + Environment.NewLine);
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows;
-using System.Windows.Controls;
 
 using FFXIV.BalloonChat.Balloon;
 using FFXIV.BalloonChat.Config;
@@ -11,8 +10,6 @@ namespace FFXIV.BalloonChat
 {
     public partial class DebugWindow : Window
     {
-        private ViewTraceListener traceListener;
-
         public DebugWindow()
         {
             this.InitializeComponent();
@@ -23,12 +20,11 @@ namespace FFXIV.BalloonChat
 
         private void DebugWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            this.traceListener = new ViewTraceListener(this.LogTextBox);
-            Trace.Listeners.Add(this.traceListener);
+            TraceUtility.TraceListner.TextBoxes.Add(this.LogTextBox);
 
             this.Closed += (s1, e1) =>
             {
-                Trace.Listeners.Remove(this.traceListener);
+                TraceUtility.TraceListner.TextBoxes.Remove(this.LogTextBox);
             };
         }
 
@@ -43,34 +39,9 @@ namespace FFXIV.BalloonChat
             }
             catch (Exception ex)
             {
-                TraceUtility.WriteExceptionLog(ex);
-
-                MessageBox.Show(
-                    ex.ToString());
+                Trace.WriteLine(ex.ToString());
+                MessageBox.Show(ex.ToString());
             }
-        }
-    }
-
-    internal class ViewTraceListener : TraceListener
-    {
-        private TextBox textBox;
-
-        public ViewTraceListener(
-            TextBox textBox)
-        {
-            this.textBox = textBox;
-        }
-
-        public override void Write(string message)
-        {
-            this.textBox.Text += message;
-            this.textBox.ScrollToEnd();
-        }
-
-        public override void WriteLine(string message)
-        {
-            this.textBox.Text += message + Environment.NewLine;
-            this.textBox.ScrollToEnd();
         }
     }
 }

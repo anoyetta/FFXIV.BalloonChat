@@ -1,4 +1,5 @@
-﻿using System.Windows.Media;
+﻿using System;
+using System.Windows.Media;
 
 namespace FFXIV.PluginCore
 {
@@ -7,12 +8,22 @@ namespace FFXIV.PluginCore
         public static Color ToColor(
             this string colorByHTML)
         {
+            var c = Colors.White;
+
             if (string.IsNullOrWhiteSpace(colorByHTML))
             {
-                return Colors.White;
+                return c;
             }
 
-            return (Color)ColorConverter.ConvertFromString(colorByHTML);
+            try
+            {
+                c = (Color)ColorConverter.ConvertFromString(colorByHTML);
+            }
+            catch
+            {
+            }
+
+            return c;
         }
     }
 }

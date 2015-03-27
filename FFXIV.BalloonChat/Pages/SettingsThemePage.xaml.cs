@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -107,7 +108,7 @@ namespace FFXIV.BalloonChat.Pages
             this.ThemesListBox.Items.Refresh();
             this.ThemesListBox.SelectedItem = newTheme;
 
-            TraceUtility.WriteLog("Added new theme.");
+            Trace.WriteLine("Added new theme.");
         }
 
         private void DeleteThemeMenuItem_Click(object sender, RoutedEventArgs e)
@@ -131,7 +132,7 @@ namespace FFXIV.BalloonChat.Pages
                     selectedIndex != 0 ? selectedIndex - 1 : 0;
             }
 
-            TraceUtility.WriteLog("Deleted theme. [" + theme.Name + "]");
+            Trace.WriteLine("Deleted theme. [" + theme.Name + "]");
         }
 
         private void FontButton_Click(object sender, RoutedEventArgs e)
@@ -195,7 +196,7 @@ namespace FFXIV.BalloonChat.Pages
 
             BalloonChatConfig.Default.Save();
 
-            TraceUtility.WriteLog("Updated theme. [" + theme.Name + "]");
+            Trace.WriteLine("Updated theme. [" + theme.Name + "]");
         }
 
         private void PreviewBalloon()

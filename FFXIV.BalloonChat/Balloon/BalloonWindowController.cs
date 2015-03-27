@@ -1,17 +1,15 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Linq;
 
-using FFXIV.PluginCore;
-using ffxivlib;
+using FFXIVAPP.Client.Helper;
+using FFXIVAPP.Common.Core.Memory;
+using FFXIVAPP.IPluginInterface.Events;
 
 namespace FFXIV.BalloonChat.Balloon
 {
     public class BalloonWindowController
     {
-        private const int DefaultPollingInterval = 100;
-
         #region Singleton
 
         private static BalloonWindowController instance;
@@ -31,121 +29,39 @@ namespace FFXIV.BalloonChat.Balloon
 
         #endregion
 
-        #region PollingTask
+        public ActorEntity CurrentUser { get; private set; }
+        public List<ActorEntity> CurrentPCs { get; private set; }
 
-        private Task pollingTask;
-        private CancellationTokenSource pollingTaskCTS;
-        private int pollingInterval;
-
-        public void Start()
+        public void Initialize()
         {
-            this.pollingTaskCTS = new CancellationTokenSource();
-
-            this.pollingInterval = DefaultPollingInterval;
-
-            this.pollingTask = new Task(() =>
-            {
-                while (true)
-                {
-                    Thread.Sleep(this.pollingInterval);
-
-                    if (this.pollingTaskCTS.Token.IsCancellationRequested)
-                    {
-                        this.pollingTaskCTS.Token.ThrowIfCancellationRequested();
-                    }
-
-                    try
-                    {
-                        this.PollingTaskCore();
-                    }
-                    catch (Exception ex)
-                    {
-                        TraceUtility.WriteExceptionLog(ex);
-                        Thread.Sleep(3 * 1000);
-                    }
-                }
-            }, this.pollingTaskCTS.Token);
-
-            // ポーリングを開始する
-            this.pollingTask.Start();
-            TraceUtility.WriteLog("監視タスクを開始しました。");
+            HelperViewModel.Instance.PluginHost.NewPCEntries += this.PluginHost_NewPCEntries;
+            HelperViewModel.Instance.PluginHost.NewChatLogEntry += this.PluginHost_NewChatLogEntry;
         }
 
-        public void End()
+        private void PluginHost_NewPCEntries(object sender, ActorEntitiesEvent e)
         {
-            if (this.pollingTask == null ||
-                this.pollingTaskCTS == null)
+            if (e.ActorEntities == null)
             {
                 return;
             }
 
-            this.pollingTaskCTS.Cancel();
-
-            try
+            if (e.ActorEntities.Any())
             {
-                this.pollingTask.Wait();
+                this.CurrentUser = e.ActorEntities.FirstOrDefault();
+                this.CurrentPCs = new List<ActorEntity>(e.ActorEntities);
             }
-            catch (AggregateException)
-            {
-                TraceUtility.WriteLog("監視タスクを終了しました。");
-            }
-
-            this.pollingTask.Dispose();
-            this.pollingTask = null;
-
-            this.pollingTaskCTS.Dispose();
-            this.pollingTaskCTS = null;
         }
 
-        #endregion
-
-        private FFXIVLIB ffivlib;
-        private Chatlog chatLog;
-
-        private void PollingTaskCore()
+        private void PluginHost_NewChatLogEntry(object sender, ChatLogEntryEvent e)
         {
-            if (Process.GetProcessesByName("ffxiv").Length > 0)
-            {
-                if (this.ffivlib == null)
-                {
-                    this.ffivlib = new FFXIVLIB();
-                }
-            }
-            else
-            {
-                this.pollingInterval = 3 * 1000;
-                return;
-            }
-
-            this.pollingInterval = DefaultPollingInterval;
-
-            if (this.chatLog == null)
-            {
-                this.chatLog = this.ffivlib.GetChatlog();
-            }
-
-            if (!this.chatLog.IsNewLine())
+            var entry = e.ChatLogEntry;
+            if (entry == null)
             {
                 return;
             }
 
-            foreach (var entry in this.chatLog.GetChatLogLines())
-            {
-                TraceUtility.WriteLog(entry.RawString);
-            }
-
-            var entitys = this.ffivlib.GetEntityByType(TYPE.Player);
-            foreach (var entity in entitys)
-            {
-                var t = string.Empty;
-                t += "{" + Environment.NewLine;
-                t += "    Name = " + entity.Name + "," + Environment.NewLine;
-                t += "    X = " + entity.X.ToString() + "," + Environment.NewLine;
-                t += "    Y = " + entity.Y.ToString() + "," + Environment.NewLine;
-                t += "    Z = " + entity.Z.ToString() + "," + Environment.NewLine;
-                t += "}" + Environment.NewLine;
-                TraceUtility.WriteLog(t);
-            }
+            Trace.WriteLine(entry.Raw);
+            Trace.WriteLine(entry.Line);
         }
     }
 }

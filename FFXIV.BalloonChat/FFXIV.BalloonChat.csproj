@@ -40,9 +40,21 @@
   <PropertyGroup>
     <ApplicationIcon>Balloon.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ffxivlib">
-      <HintPath>..\packages\ffxivlib.dll</HintPath>
+    <Reference Include="FFXIVAPP.Client">
+      <HintPath>..\ffxivapp-resources\FFXIVAPP.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="FFXIVAPP.Client.Helper">
+      <HintPath>..\ffxivapp-resources\FFXIVAPP.Client.Helper.dll</HintPath>
+    </Reference>
+    <Reference Include="FFXIVAPP.Common">
+      <HintPath>..\ffxivapp-resources\FFXIVAPP.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="FFXIVAPP.IPluginInterface">
+      <HintPath>..\ffxivapp-resources\FFXIVAPP.IPluginInterface.dll</HintPath>
     </Reference>
     <Reference Include="FirstFloor.ModernUI">
       <HintPath>..\packages\ModernUI.WPF.1.0.6\lib\net45\FirstFloor.ModernUI.dll</HintPath>
@@ -81,10 +93,10 @@
       <DependentUpon>BalloonWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Balloon\BalloonWindowController.cs" />
-    <Compile Include="ChatMode.cs" />
     <Compile Include="Config\BalloonChatConfig.cs" />
     <Compile Include="Config\BalloonChatMode.cs" />
     <Compile Include="Config\BalloonChatTheme.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="DebugWindow.xaml.cs">
       <DependentUpon>DebugWindow.xaml</DependentUpon>
     </Compile>
@@ -210,4 +222,11 @@
     <!--Publish copies the untransformed App.config to deployment directory so overwrite it-->
     <Copy Condition="Exists('$(DeployedConfig)')" SourceFiles="$(IntermediateOutputPath)$(TargetFileName).config" DestinationFiles="$(DeployedConfig)" />
   </Target>
+  <PropertyGroup>
+    <PostBuildEvent>@IF "$(ConfigurationName)"=="Release" (
+@DEL /Q $(TargetDir)*.xml
+@DEL /Q $(TargetDir)*.pdb
+)
+</PostBuildEvent>
+  </PropertyGroup>
 </Project>

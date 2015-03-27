@@ -7,7 +7,7 @@ namespace FFXIV.BalloonChat.Config
     {
         public BalloonChatMode()
         {
-            this.Mode = ChatMode.Say;
+            this.Mode = Constants.ChatModes.Say;
             this.Enabled = true;
             this.Theme = Guid.Empty;
             this.EnabledSoundEffect = true;

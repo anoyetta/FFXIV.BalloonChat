@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Xml.Serialization;
@@ -55,68 +56,19 @@ namespace FFXIV.BalloonChat.Config
         {
             this.Opacity = 5;
 
-            this.ChatModeSettings = new List<BalloonChatMode>(new BalloonChatMode[]
+            this.ChatModeSettings = new List<BalloonChatMode>();
+            foreach (var mode in Constants.ChatModes.Array)
             {
-                new BalloonChatMode()
+                if (mode.Name == Constants.ChatModes.Public.Name)
                 {
-                    Mode = ChatMode.Say
-                },
+                    continue;
+                }
 
-                new BalloonChatMode()
+                this.ChatModeSettings.Add(new BalloonChatMode()
                 {
-                    Mode = ChatMode.Yell
-                },
-
-                new BalloonChatMode()
-                {
-                    Mode = ChatMode.Shout
-                },
-
-                new BalloonChatMode()
-                {
-                    Mode = ChatMode.Tell
-                },
-
-                new BalloonChatMode()
-                {
-                    Mode = ChatMode.Party
-                },
-
-                new BalloonChatMode()
-                {
-                    Mode = ChatMode.Alliance
-                },
-
-                new BalloonChatMode()
-                {
-                    Mode = ChatMode.FreeCompany
-                },
-
-                new BalloonChatMode()
-                {
-                    Mode = ChatMode.LinkShell1
-                },
-
-                new BalloonChatMode()
-                {
-                    Mode = ChatMode.LinkShell2
-                },
-
-                new BalloonChatMode()
-                {
-                    Mode = ChatMode.LinkShell3
-                },
-
-                new BalloonChatMode()
-                {
-                    Mode = ChatMode.LinkShell4
-                },
-
-                new BalloonChatMode()
-                {
-                    Mode = ChatMode.LinkShell5
-                },
-            });
+                    Mode = mode
+                });
+            }
 
             this.Themes = new List<BalloonChatTheme>(new BalloonChatTheme[]
             {
@@ -131,8 +83,6 @@ namespace FFXIV.BalloonChat.Config
             if (!File.Exists(file))
             {
                 this.Reset();
-                this.Save();
-
                 return;
             }
 
@@ -140,16 +90,19 @@ namespace FFXIV.BalloonChat.Config
             {
                 using (var sr = new StreamReader(file, new UTF8Encoding(false)))
                 {
-                    if (sr.BaseStream.Length > 0)
+                    if (sr.BaseStream.Length <= 0)
                     {
-                        var xs = new XmlSerializer(instance.GetType());
-                        instance = xs.Deserialize(sr) as BalloonChatConfig;
+                        this.Reset();
+                        return;
                     }
+
+                    var xs = new XmlSerializer(instance.GetType());
+                    instance = xs.Deserialize(sr) as BalloonChatConfig;
                 }
             }
             catch (Exception ex)
             {
-                TraceUtility.WriteExceptionLog(ex);
+                Trace.WriteLine(ex);
             }
         }
 

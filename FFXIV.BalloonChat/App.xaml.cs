@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -16,6 +18,8 @@ namespace FFXIV.BalloonChat
         {
             Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
+            TraceUtility.SetupListener(Assembly.GetExecutingAssembly());
+
             this.Startup += this.App_Startup;
             this.Exit += this.App_Exit;
             this.DispatcherUnhandledException += this.App_DispatcherUnhandledException;
@@ -25,21 +29,21 @@ namespace FFXIV.BalloonChat
         {
             try
             {
-                TraceUtility.WriteLog("App_Startup begin.");
+                Trace.WriteLine("App_Startup begin.");
 
                 this.componet = new TaskTrayComponent();
 
                 if (!BalloonChatConfig.ExistConfigFile)
                 {
+                    BalloonChatConfig.Default.Save();
                     this.componet.ShowMainWindow();
                 }
 
-                // 監視タスクを開始する
-                BalloonWindowController.Default.Start();
+                BalloonWindowController.Default.Initialize();
             }
             finally
             {
-                TraceUtility.WriteLog("App_Startup end.");
+                Trace.WriteLine("App_Startup end.");
             }
         }
 
@@ -47,17 +51,7 @@ namespace FFXIV.BalloonChat
         {
             try
             {
-                TraceUtility.WriteLog("App_Exit begin.");
-
-                // 監視タスクを終了する
-                try
-                {
-                    BalloonWindowController.Default.End();
-                }
-                catch (Exception ex)
-                {
-                    TraceUtility.WriteExceptionLog(ex);
-                }
+                Trace.WriteLine("App_Exit begin.");
 
                 // タスクトレイアイコンを閉じる
                 try
@@ -70,20 +64,20 @@ namespace FFXIV.BalloonChat
                 }
                 catch (Exception ex)
                 {
-                    TraceUtility.WriteExceptionLog(ex);
+                    Trace.WriteLine(ex);
                 }
             }
             finally
             {
-                TraceUtility.WriteLog("App_Exit end.");
+                Trace.WriteLine("App_Exit end.");
             }
         }
 
         private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            TraceUtility.WriteExceptionLog(
-                "App_DispatcherUnhandledException",
-                e.Exception);
+            Trace.WriteLine(
+                "App_DispatcherUnhandledException" + Environment.NewLine +
+                e.Exception.ToString());
 
             var m = string.Empty;
             m += "予期しない例外が発生しました。アプリケーションを終了します。" + Environment.NewLine;

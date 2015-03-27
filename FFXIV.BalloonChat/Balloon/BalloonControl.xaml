@@ -92,7 +92,7 @@
 
             <controls:OutlineTextBlock.Effect>
               <DropShadowEffect
-                BlurRadius="6" 
+                BlurRadius="1" 
                 ShadowDepth="0"
                 Direction="0"
                 Color="{DynamicResource FontShadowColor}" />

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 
 using FFXIV.BalloonChat.Config;
@@ -22,15 +23,7 @@ namespace FFXIV.BalloonChat
 
             this.ExitMenuItem.Click += (s, e) =>
             {
-                try
-                {
-                    BalloonChatConfig.Default.Save();
-                }
-                catch (Exception ex)
-                {
-                    TraceUtility.WriteExceptionLog(ex);
-                }
-
+                BalloonChatConfig.Default.Save();
                 Application.Current.Shutdown();
             };
         }
