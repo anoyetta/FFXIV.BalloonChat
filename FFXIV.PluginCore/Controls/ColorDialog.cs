@@ -1,18 +1,19 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 using FirstFloor.ModernUI.Windows.Controls;
 
 namespace FFXIV.PluginCore.Controls
 {
-    public class FontDialog
+    public class ColorDialog
     {
-        private FontDialogContent content = new FontDialogContent();
+        private ColorDialogContent content = new ColorDialogContent();
 
-        public FontInfo Font
+        public Color Color
         {
-            get { return this.content.FontInfo; }
-            set { this.content.FontInfo = value; }
+            get { return this.content.Color; }
+            set { this.content.Color = value; }
         }
 
         public bool? ShowDialog(
@@ -20,7 +21,7 @@ namespace FFXIV.PluginCore.Controls
         {
             var dialog = new ModernDialog
             {
-                Title = "Please select a font.",
+                Title = "Please select a color.",
                 Content = this.content,
                 Owner = owner,
                 MaxWidth = 1280,
@@ -29,7 +30,7 @@ namespace FFXIV.PluginCore.Controls
             };
 
             dialog.Buttons = new Button[] { dialog.OkButton, dialog.CancelButton };
-            dialog.OkButton.Click += this.content.OKBUtton_Click;
+            dialog.OkButton.Click += (s, e) => this.content.Apply();
 
             return dialog.ShowDialog();
         }

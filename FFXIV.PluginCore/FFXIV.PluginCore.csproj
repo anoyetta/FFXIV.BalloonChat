@@ -52,11 +52,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ColorExtension.cs" />
+    <Compile Include="Controls\ColorDialog.cs" />
+    <Compile Include="Controls\ColorDialogContent.xaml.cs">
+      <DependentUpon>ColorDialogContent.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ColorDialogViewModel.cs" />
     <Compile Include="Controls\InverseBooleanConverter.cs" />
     <Compile Include="Controls\FontDialog.cs" />
     <Compile Include="Controls\FontFamilyToNameConverter.cs" />
     <Compile Include="Controls\FontDialogContent.xaml.cs" />
     <Compile Include="Controls\OutlineTextBlock.cs" />
+    <Compile Include="Controls\StringToDoubleConverter.cs" />
     <Compile Include="EnvironmentUtility.cs" />
     <Compile Include="FontInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -86,6 +92,10 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\ColorDialogContent.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\FontDialogContent.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

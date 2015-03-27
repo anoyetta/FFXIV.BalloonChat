@@ -7,6 +7,7 @@ using System.Windows.Threading;
 using FFXIV.BalloonChat.Balloon;
 using FFXIV.BalloonChat.Config;
 using FFXIV.PluginCore;
+using FirstFloor.ModernUI.Windows.Controls;
 
 namespace FFXIV.BalloonChat
 {
@@ -84,14 +85,18 @@ namespace FFXIV.BalloonChat
             m += Environment.NewLine;
             m += e.Exception.ToString();
 
-            MessageBox.Show(
+            ModernDialog.ShowMessage(
                 m,
-                EnvironmentUtility.GetProductName(),
-                MessageBoxButton.OK,
-                MessageBoxImage.Error,
-                MessageBoxResult.OK);
+                "Unhandled Exception",
+                MessageBoxButton.OK);
 
-            Application.Current.Shutdown();
+            try
+            {
+                Application.Current.Shutdown();
+            }
+            catch
+            {
+            }
         }
     }
 }
